@@ -5,12 +5,98 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-  <title>Gunify</title>
+  <title>Gunify - KRSV Vector</title>
+  <style>
+    .arjs-loader {
+      height: 100%;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .info-panel {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      padding: 15px 25px;
+      border-radius: 30px;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    
+    .info-panel.visible {
+      opacity: 1;
+    }
+    
+    .info-panel h2 {
+      margin: 0 0 8px 0;
+      font-size: 22px;
+      font-weight: bold;
+      color: #ffcc00;
+      text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
+    }
+    
+    .info-panel p {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+    
+    .watermark {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      color: white;
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+      text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 8px 15px;
+      border-radius: 20px;
+    }
+  </style>
 </head>
-<body style="margin : 0px; overflow: hidden;">
+<body style="margin: 0px; overflow: hidden;">
 
   <div class="arjs-loader">
     <div class="spinner"></div>
+  </div>
+  
+  <div class="watermark">Gunify AR</div>
+  
+  <div class="info-panel" id="infoPanel">
+    <h2>KRSV Vector</h2>
+    <p>Advanced tactical firearm with precision targeting</p>
   </div>
 
   <!-- a-frame scene -->
@@ -23,29 +109,56 @@
 
     <!-- KRSV Vector -->
     <a-nft
+      id="krsvMarker"
       type="nft"
-      url="./markers/V22/V22"
+      url="./markers/KRSV/KRSV"
       smooth="true"
       smoothCount="10"
       smoothTolerance=".01"
       smoothThreshold="5"
+      emitevents="true"
     >
       <a-entity
-        gltf-model="./models/V22/scene.gltf"
-        scale="0.5 0.5 0.5"
-        position="45 0 -105"
+        gltf-model="./models/KRSV/scene.gltf"
+        scale="40 40 40"
+        position="295 150 -35"
         rotation="0 90 0"
-      ></a-entity>
+      >
+        </a-entity>
+      </a-entity>
     </a-nft>
 
     <!-- Lighting -->
     <a-entity light="type: ambient; intensity: 2"></a-entity>
     <a-entity light="type: directional; intensity: 4" position="1 1 1"></a-entity>
 
-    <!-- Static camera that moves according to the device movemenents -->
+    <!-- Static camera that moves according to the device movements -->
     <a-entity camera></a-entity>
 
   </a-scene>
+  
+  <script>
+    // Remove loader once AR scene is loaded
+    document.querySelector('a-scene').addEventListener('loaded', function() {
+      setTimeout(function() {
+        document.querySelector('.arjs-loader').style.display = 'none';
+      }, 1500);
+    });
+    
+    // Get references to the marker and info panel
+    const marker = document.getElementById('krsvMarker');
+    const infoPanel = document.getElementById('infoPanel');
+    
+    // Show info panel when marker is found
+    marker.addEventListener('markerFound', function() {
+      infoPanel.classList.add('visible');
+    });
+    
+    // Hide info panel when marker is lost
+    marker.addEventListener('markerLost', function() {
+      infoPanel.classList.remove('visible');
+    });
+  </script>
   
 </body>
 </html>

@@ -1,12 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-  <title>Gunify - KRSV Vector</title>
-  <style>
+  <title>Gunify</title>
+    <style>
+
+       * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #1a2a6c, #2c3e50);
+      color: white;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
     .arjs-loader {
       height: 100%;
       width: 100%;
@@ -23,7 +35,7 @@
     .spinner {
       width: 50px;
       height: 50px;
-      border: 5px solid rgba(255, 255, 255, 0.3);
+      border: 5px solid #ffcc00;
       border-radius: 50%;
       border-top-color: #fff;
       animation: spin 1s ease-in-out infinite;
@@ -69,34 +81,74 @@
       font-size: 16px;
       line-height: 1.4;
     }
+
+    .info-panel .specs {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
     
-    .watermark {
+    .info-panel .spec {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+   .watermark {
       position: fixed;
       top: 20px;
       left: 20px;
       color: white;
-      font-family: Arial, sans-serif;
-      font-size: 18px;
-      font-weight: bold;
+      font-size: 20px;
+      font-weight: 600;
       text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
       z-index: 10;
-      background: rgba(0, 0, 0, 0.5);
-      padding: 8px 15px;
-      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 10px 20px;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .watermark::before {
+      content: "";
+      width: 12px;
+      height: 12px;
+      background: #E4040E;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { opacity: 1; }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; }
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
+  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
 </head>
-<body style="margin: 0px; overflow: hidden;">
+
+<body style="margin : 0px; overflow: hidden;">
 
   <div class="arjs-loader">
     <div class="spinner"></div>
   </div>
   
-  <div class="watermark">Gunify AR</div>
+  <div class="watermark">Gunify</div>
   
   <div class="info-panel" id="infoPanel">
-    <h2>KRSV Vector</h2>
-    <p>Advanced tactical firearm with precision targeting</p>
+    <h2 id="gunTitle">KRSV Vector</h2>
+    <p id="gunDescription">Advanced tactical firearm with precision targeting</p>
+    <div class="specs">
+      <div class="spec" id="spec1">Caliber: 7.62mm</div>
+      <div class="spec" id="spec2">Range: 200m</div>
+      <div class="spec" id="spec3">Fire Mode: Auto</div>
+    </div>
   </div>
 
   <!-- a-frame scene -->
@@ -106,59 +158,124 @@
     embedded
     arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
   >
-
+  
     <!-- KRSV Vector -->
     <a-nft
-      id="krsvMarker"
       type="nft"
+      id="krsvMarker"
       url="./markers/KRSV/KRSV"
       smooth="true"
       smoothCount="10"
       smoothTolerance=".01"
       smoothThreshold="5"
-      emitevents="true"
     >
       <a-entity
         gltf-model="./models/KRSV/scene.gltf"
-        scale="40 40 40"
-        position="295 150 -35"
-        rotation="0 90 0"
-      >
-        </a-entity>
-      </a-entity>
+        scale="30 30 30"
+        position="100 0 -120"
+        rotation="0 -90 0"
+      ></a-entity>
+    </a-nft>
+
+    <!-- Luger -->
+    <a-nft
+      type="nft"
+      id="lugerMarker"
+      url="./markers/Luger/Luger"
+      smooth="true"
+      smoothCount="10"
+      smoothTolerance=".01"
+      smoothThreshold="5"
+    >
+      <a-entity
+        gltf-model="./models/Luger/scene.gltf"
+        scale="380 380 380"
+        position="100 0 -120"
+        rotation="0 -90 0"
+      ></a-entity>
     </a-nft>
 
     <!-- Lighting -->
     <a-entity light="type: ambient; intensity: 2"></a-entity>
     <a-entity light="type: directional; intensity: 4" position="1 1 1"></a-entity>
 
-    <!-- Static camera that moves according to the device movements -->
+    <!-- static camera that moves according to the device movemenents -->
     <a-entity camera></a-entity>
-
   </a-scene>
-  
+
   <script>
-    // Remove loader once AR scene is loaded
-    document.querySelector('a-scene').addEventListener('loaded', function() {
-      setTimeout(function() {
-        document.querySelector('.arjs-loader').style.display = 'none';
-      }, 1500);
-    });
-    
-    // Get references to the marker and info panel
-    const marker = document.getElementById('krsvMarker');
+
+    // Database of gun information
+    const gunDatabase = {
+      krsvMarker: {
+        title: "KRSV Vector",
+        description: "Advanced tactical firearm with precision targeting system",
+        specs: [
+          "Caliber: 7.62mm",
+          "Range: 200m",
+          "Fire Mode: Auto"
+        ]
+      },
+      lugerMarker: {
+        title: "Luger P08",
+        description: "Classic German semi-automatic pistol from World War era",
+        specs: [
+          "Caliber: 9mm",
+          "Range: 50m",
+          "Fire Mode: Semi-Auto"
+        ]
+      }
+    };
+
     const infoPanel = document.getElementById('infoPanel');
-    
-    // Show info panel when marker is found
-    marker.addEventListener('markerFound', function() {
-      infoPanel.classList.add('visible');
+    const gunTitle = document.getElementById('gunTitle');
+    const gunDescription = document.getElementById('gunDescription');
+    const spec1 = document.getElementById('spec1');
+    const spec2 = document.getElementById('spec2');
+    const spec3 = document.getElementById('spec3');
+
+    // Set up event listeners for each marker
+    const krsvMarker = document.getElementById('krsvMarker');
+    const lugerMarker = document.getElementById('lugerMarker');
+
+
+    // Function to update the info panel
+    function updateInfoPanel(gunId) {
+      const gunData = gunDatabase[gunId];
+      
+      if (gunData) {
+        gunTitle.textContent = gunData.title;
+        gunDescription.textContent = gunData.description;
+        spec1.textContent = gunData.specs[0];
+        spec2.textContent = gunData.specs[1];
+        spec3.textContent = gunData.specs[2];
+        infoPanel.classList.add('visible');
+      }
+    }
+
+    // Function to hide the info panel
+    function hideInfoPanel() {
+      infoPanel.classList.remove('visible');
+    }
+
+     // KRSV Marker events
+    krsvMarker.addEventListener('markerFound', function() {
+      updateInfoPanel('krsvMarker');
     });
     
-    // Hide info panel when marker is lost
-    marker.addEventListener('markerLost', function() {
-      infoPanel.classList.remove('visible');
+    krsvMarker.addEventListener('markerLost', function() {
+      hideInfoPanel();
+    });
+    
+    // Luger Marker events
+    lugerMarker.addEventListener('markerFound', function() {
+      updateInfoPanel('lugerMarker');
+    });
+    
+    lugerMarker.addEventListener('markerLost', function() {
+      hideInfoPanel();
     });
   </script>
-  
+
 </body>
 </html>
