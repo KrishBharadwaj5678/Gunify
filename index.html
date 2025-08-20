@@ -299,20 +299,38 @@
       ></a-entity>
     </a-nft>
 
-    <!-- Luger -->
+    <!-- AK47 -->
     <a-nft
       type="nft"
-      id="lugerMarker"
-      url="./markers/Luger/Luger"
+      id="ak47Marker"
+      url="./markers/AK47/AK47"
       smooth="true"
       smoothCount="10"
       smoothTolerance=".01"
       smoothThreshold="5"
     >
       <a-entity
-        gltf-model="./models/Luger/scene.gltf"
-        scale="380 380 380"
-        position="100 0 -120"
+        gltf-model="./models/AK47/scene.gltf"
+        scale="1 1 1"
+        position="110 0 -120"
+        rotation="0 0 0"
+      ></a-entity>
+    </a-nft>
+
+    <!-- P90 -->
+    <a-nft
+      type="nft"
+      id="p90Marker"
+      url="./markers/P90/P90"
+      smooth="true"
+      smoothCount="10"
+      smoothTolerance=".01"
+      smoothThreshold="5"
+    >
+      <a-entity
+        gltf-model="./models/P90/scene.gltf"
+        scale="25 25 25"
+        position="180 0 -120"
         rotation="0 -90 0"
       ></a-entity>
     </a-nft>
@@ -340,15 +358,28 @@
         fire: "./sounds/KRSV.mp3",
         reload: "./reload/KRSV.mp3"
       },
-      lugerMarker: {
-        title: "Luger P08",
+      ak47Marker: {
+        title: "AK-47",
         description: "Classic German semi-automatic pistol from World War era",
         specs: [
           "Caliber: 9mm",
           "Range: 50m",
           "Fire Mode: Semi-Auto"
-        ]
-      }
+        ],
+        fire: "./sounds/AK47.mp3",
+        reload: "./reload/AK47.mp3"
+      },
+      p90Marker: {
+        title: "P90",
+        description: "Classic German semi-automatic pistol from World War era",
+        specs: [
+          "Caliber: 9mm",
+          "Range: 50m",
+          "Fire Mode: Semi-Auto"
+        ],
+        fire: "./sounds/P90.mp3",
+        reload: "./reload/P90.mp3"
+      },
     };
 
     let fireAudio = new Audio(); // fire auio
@@ -363,7 +394,8 @@
 
     // Set up event listeners for each marker
     const krsvMarker = document.getElementById('krsvMarker');
-    const lugerMarker = document.getElementById('lugerMarker');
+    const ak47Marker = document.getElementById('ak47Marker');
+    const p90Marker = document.getElementById('p90Marker');
 
     const infoButton = document.querySelector(".info-icon");
     const shootButton = document.querySelector(".shoot-icon");
@@ -391,7 +423,7 @@
     // Function to update the info panel
     function updateInfoPanel(gunId) {
       const gunData = gunDatabase[gunId];
-      
+
       if (gunData) {
         gunTitle.textContent = gunData.title;
         gunDescription.textContent = gunData.description;
@@ -432,15 +464,28 @@
       hideInfo();
     });
     
-    // Luger Marker events
-    lugerMarker.addEventListener('markerFound', function() {
-      updateInfoPanel('lugerMarker');
+    // AK47 Marker events
+    ak47Marker.addEventListener('markerFound', function() {
+      infoPanel.style.display="block";
+      updateInfoPanel('ak47Marker');
     });
     
-    lugerMarker.addEventListener('markerLost', function() {
+    ak47Marker.addEventListener('markerLost', function() {
       hideInfoPanel();
       hideInfo();
     });
+
+    // P90 Marker events
+    p90Marker.addEventListener('markerFound', function() {
+      infoPanel.style.display="block";
+      updateInfoPanel('p90Marker');
+    });
+    
+    p90Marker.addEventListener('markerLost', function() {
+      hideInfoPanel();
+      hideInfo();
+    });
+
   </script>
 
 </body>
