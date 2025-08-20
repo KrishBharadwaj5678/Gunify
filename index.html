@@ -311,27 +311,9 @@
     >
       <a-entity
         gltf-model="./models/AK47/scene.gltf"
-        scale="0.7 0.7 0.7"
-        position="110 0 -120"
+        scale="0.6 0.6 0.6"
+        position="100 0 -110"
         rotation="0 0 0"
-      ></a-entity>
-    </a-nft>
-
-    <!-- P90 -->
-    <a-nft
-      type="nft"
-      id="p90Marker"
-      url="./markers/P90/P90"
-      smooth="true"
-      smoothCount="10"
-      smoothTolerance=".01"
-      smoothThreshold="5"
-    >
-      <a-entity
-        gltf-model="./models/P90/scene.gltf"
-        scale="18 18 18"
-        position="125 0 -120"
-        rotation="0 -90 0"
       ></a-entity>
     </a-nft>
 
@@ -368,18 +350,7 @@
         ],
         fire: "./sounds/AK47.mp3",
         reload: "./reload/AK47.mp3"
-      },
-      p90Marker: {
-        title: "P90",
-        description: "Classic German semi-automatic pistol from World War era",
-        specs: [
-          "Caliber: 9mm",
-          "Range: 50m",
-          "Fire Mode: Semi-Auto"
-        ],
-        fire: "./sounds/P90.mp3",
-        reload: "./reload/P90.mp3"
-      },
+      }
     };
 
     let fireAudio = new Audio(); // fire auio
@@ -395,7 +366,6 @@
     // Set up event listeners for each marker
     const krsvMarker = document.getElementById('krsvMarker');
     const ak47Marker = document.getElementById('ak47Marker');
-    const p90Marker = document.getElementById('p90Marker');
 
     const infoButton = document.querySelector(".info-icon");
     const shootButton = document.querySelector(".shoot-icon");
@@ -471,17 +441,6 @@
     });
     
     ak47Marker.addEventListener('markerLost', function() {
-      hideInfoPanel();
-      hideInfo();
-    });
-
-    // P90 Marker events
-    p90Marker.addEventListener('markerFound', function() {
-      infoPanel.style.display="block";
-      updateInfoPanel('p90Marker');
-    });
-    
-    p90Marker.addEventListener('markerLost', function() {
       hideInfoPanel();
       hideInfo();
     });
