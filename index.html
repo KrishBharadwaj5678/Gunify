@@ -5,7 +5,7 @@
   <title>Gunify</title>
     <style>
 
-       * {
+    * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
@@ -45,56 +45,118 @@
       to { transform: rotate(360deg); }
     }
     
+    /* Info Panel */
     .info-panel {
       position: fixed;
-      bottom: 20px;
+      bottom: 30px;
       left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 15px 25px;
-      border-radius: 30px;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      z-index: 10;
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      background: #1e1e2f;
+      color: #fff;
+      padding: 25px 30px;
+      border-radius: 18px;
+      font-family: "Poppins", Arial, sans-serif;
+      text-align: left;
+      z-index: 999;
+      max-width: 400px;
+      width: 90%;
+      backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
       opacity: 0;
-      transition: opacity 0.5s ease;
-    }
-    
-    .info-panel.visible {
-      opacity: 1;
-    }
-    
-    .info-panel h2 {
-      margin: 0 0 8px 0;
-      font-size: 22px;
-      font-weight: bold;
-      color: #ffcc00;
-      text-shadow: 0 0 5px rgba(255, 204, 0, 0.5);
-    }
-    
-    .info-panel p {
-      margin: 0;
-      font-size: 16px;
-      line-height: 1.4;
+      pointer-events: none; /* makes it non-clickable when hidden */
+      transform: translateX(-50%) translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+
     }
 
+    .info-panel.visible {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Header flex layout */
+    .info-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 204, 0, 0.3);
+      padding-bottom: 6px;
+    }
+
+    /* Gun title */
+    .info-header h2 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffcc00;
+      letter-spacing: 0.5px;
+    }
+
+    /* Close Button */
+    .close-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 30px;
+      background: rgba(255, 255, 255, 0.05);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .close-wrapper:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: scale(1.1);
+    }
+
+    /* Close icon */
+    .close-icon {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.8);
+      pointer-events: none; 
+    }
+
+    /* Visible animation */
+    .info-panel.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Description */
+    .info-panel p {
+      margin: 8px 0;
+      font-size: 15px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* Specs container */
     .info-panel .specs {
       margin-top: 15px;
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      gap: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 12px;
     }
-    
+
+    /* Each spec card */
     .info-panel .spec {
-      background: rgba(255, 255, 255, 0.1);
-      padding: 8px 15px;
-      border-radius: 20px;
+      background: #2a2a40;
+      padding: 10px 14px;
+      border-radius: 12px;
       font-size: 14px;
+      font-weight: 500;
+      color: #ffcc00;
+      text-align: center;
+      border: 1px solid rgba(255, 204, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .info-panel .spec:hover {
+      background: #34344f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(255, 204, 0, 0.2);
     }
 
    .watermark {
@@ -128,9 +190,48 @@
       50% { opacity: 0.4; }
       100% { opacity: 1; }
     }
+
+    /* Common button styles */
+    .icon-btn {
+      position: fixed;
+      right: 20px;
+      background: linear-gradient(135deg, #ffcc00, #ffb300); 
+      color: #1e1e1e;  /* dark icon for contrast */
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+      z-index: 9999;
+    }
+
+    .icon-btn:hover {
+      box-shadow: 0 8px 20px rgba(255, 204, 0, 0.7);
+      transform: scale(1.1);
+    }
+
+    .icon-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Position each button */
+    .info-icon { top: 20px; }
+    .shoot-icon { top: 100px; }
+    .reload-icon { top: 180px; }
+
+    .fa-info,.fa-gun,.fa-rotate-right{
+      color: white;
+    }
+
   </style>
   <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 
 <body style="margin : 0px; overflow: hidden;">
@@ -140,14 +241,35 @@
   </div>
   
   <div class="watermark">Gunify</div>
+
+  <!-- Info Icon -->
+  <div class="icon-btn info-icon">
+    <i class="fa-solid fa-info"></i>
+  </div>
+
+  <!-- Shoot Icon -->
+  <div class="icon-btn shoot-icon">
+    <i class="fa-solid fa-gun"></i>
+  </div>
+
+  <!-- Reload Icon -->
+  <div class="icon-btn reload-icon">
+    <i class="fa-solid fa-rotate-right"></i>
+  </div>
   
+  <!-- Information Panel -->
   <div class="info-panel" id="infoPanel">
-    <h2 id="gunTitle">KRSV Vector</h2>
-    <p id="gunDescription">Advanced tactical firearm with precision targeting</p>
+    <div class="info-header">
+     <h2 id="gunTitle">Gun Title</h2>
+      <div class="close-wrapper">
+        <i class="fa-solid fa-xmark close-icon" id="closeInfo"></i>
+      </div>
+    </div>
+    <p id="gunDescription"></p>
     <div class="specs">
-      <div class="spec" id="spec1">Caliber: 7.62mm</div>
-      <div class="spec" id="spec2">Range: 200m</div>
-      <div class="spec" id="spec3">Fire Mode: Auto</div>
+      <div class="spec" id="spec1"></div>
+      <div class="spec" id="spec2"></div>
+      <div class="spec" id="spec3"></div>
     </div>
   </div>
 
@@ -172,7 +294,7 @@
       <a-entity
         gltf-model="./models/KRSV/scene.gltf"
         scale="25 25 25"
-        position="130 0 -150"
+        position="160 -10 -170"
         rotation="0 90 0"
       ></a-entity>
     </a-nft>
@@ -214,7 +336,9 @@
           "Caliber: 7.62mm",
           "Range: 200m",
           "Fire Mode: Auto"
-        ]
+        ],
+        fire: "./sounds/KRSV.mp3",
+        reload: "./reload/KRSV.mp3"
       },
       lugerMarker: {
         title: "Luger P08",
@@ -227,6 +351,9 @@
       }
     };
 
+    let fireAudio = new Audio(); // fire auio
+    let reloadAudio = new Audio(); // reload audio
+
     const infoPanel = document.getElementById('infoPanel');
     const gunTitle = document.getElementById('gunTitle');
     const gunDescription = document.getElementById('gunDescription');
@@ -238,6 +365,28 @@
     const krsvMarker = document.getElementById('krsvMarker');
     const lugerMarker = document.getElementById('lugerMarker');
 
+    const infoButton = document.querySelector(".info-icon");
+    const shootButton = document.querySelector(".shoot-icon");
+    const reloadButton = document.querySelector(".reload-icon");
+    const closeButton = document.querySelector(".close-wrapper");
+
+    infoPanel.style.display="none"; // Hide the info panel initially
+
+    infoButton.addEventListener("click",()=>{
+      infoPanel.classList.add('visible');
+    })
+
+    shootButton.addEventListener("click",()=>{
+      fireAudio.play();
+    })
+
+    reloadButton.addEventListener("click",()=>{
+      reloadAudio.play();
+    })  
+
+    closeButton.addEventListener("click",()=>{
+      hideInfoPanel();
+    })  
 
     // Function to update the info panel
     function updateInfoPanel(gunId) {
@@ -249,7 +398,9 @@
         spec1.textContent = gunData.specs[0];
         spec2.textContent = gunData.specs[1];
         spec3.textContent = gunData.specs[2];
-        infoPanel.classList.add('visible');
+        fireAudio.src = gunData.fire;
+        reloadAudio.src = gunData.reload;
+        infoPanel.classList.add("visible"); 
       }
     }
 
@@ -258,13 +409,27 @@
       infoPanel.classList.remove('visible');
     }
 
+    // Function to remove the info
+    function hideInfo(){
+      gunTitle.textContent = null;
+      gunDescription.textContent = null;
+      spec1.textContent = null;
+      spec2.textContent = null;
+      spec3.textContent = null;
+      fireAudio.src = '';
+      reloadAudio.src = '';
+      infoPanel.style.display="none";
+    }
+
      // KRSV Marker events
     krsvMarker.addEventListener('markerFound', function() {
+      infoPanel.style.display="block";
       updateInfoPanel('krsvMarker');
     });
     
     krsvMarker.addEventListener('markerLost', function() {
       hideInfoPanel();
+      hideInfo();
     });
     
     // Luger Marker events
@@ -274,6 +439,7 @@
     
     lugerMarker.addEventListener('markerLost', function() {
       hideInfoPanel();
+      hideInfo();
     });
   </script>
 
