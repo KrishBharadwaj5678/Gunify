@@ -196,7 +196,7 @@
       position: fixed;
       right: 20px;
       background: linear-gradient(135deg, #ffcc00, #ffb300); 
-      color: #1e1e1e;  /* dark icon for contrast */
+      color: #1e1e1e;  
       width: 55px;
       height: 55px;
       border-radius: 50%;
@@ -231,7 +231,6 @@
   <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
   <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
 </head>
 
 <body style="margin : 0px; overflow: hidden;">
@@ -281,7 +280,7 @@
     arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
   >
   
-    <!-- KRSV Vector -->
+    <!-- KRISS Vector -->
     <a-nft
       type="nft"
       id="krsvMarker"
@@ -294,7 +293,7 @@
       <a-entity
         gltf-model="./models/KRSV/scene.gltf"
         scale="90 90 90"
-        position="70 -20 -165"
+        position="65 -20 -165"
         rotation="0 90 0"
       ></a-entity>
     </a-nft>
@@ -312,8 +311,26 @@
       <a-entity
         gltf-model="./models/AK47/scene.gltf"
         scale="0.7 0.7 0.7"
-        position="75 0 -105"
+        position="75 0 -100"
         rotation="0 0 0"
+      ></a-entity>
+    </a-nft>
+
+    <!-- Smith & Wesson Revolver M625: TODO: on model, change marker image -->
+    <a-nft
+      type="nft"
+      id="smithMarker"
+      url="./markers/Smith/Smith"
+      smooth="true"
+      smoothCount="10"
+      smoothTolerance=".01"
+      smoothThreshold="5"
+    >
+      <a-entity
+        gltf-model="./models/Smith/scene.gltf"
+        scale="80 80 80"
+        position="80 0 -100"
+        rotation="0 180 0"
       ></a-entity>
     </a-nft>
 
@@ -330,27 +347,40 @@
     // Database of gun information
     const gunDatabase = {
       krsvMarker: {
-        title: "KRSV Vector",
-        description: "Advanced tactical firearm with precision targeting system",
+        title: "KRISS Vector",
+        description: "A modern submachine gun known for its low recoil and high rate of fire.",
         specs: [
-          "Caliber: 7.62mm",
-          "Range: 200m",
-          "Fire Mode: Auto"
+          "Caliber: 9mm",
+          "Range: ~120m",
+          "Fire Mode: Semi-Auto / Burst"
         ],
         fire: "./sounds/KRSV.mp3",
         reload: "./reload/KRSV.mp3"
       },
+
       ak47Marker: {
         title: "AK-47",
-        description: "Classic German semi-automatic pistol from World War era",
+        description: "Legendary Soviet assault rifle known for its durability and reliability in harsh conditions.",
         specs: [
-          "Caliber: 9mm",
-          "Range: 50m",
-          "Fire Mode: Semi-Auto"
+          "Caliber: 7.62×39mm",
+          "Range: ~350m",
+          "Fire Mode: Semi-Auto / Full-Auto"
         ],
         fire: "./sounds/AK47.mp3",
         reload: "./reload/AK47.mp3"
-      }
+      },
+
+      smithMarker: { 
+        title: "Smith & Wesson M625",
+        description: "Modern semi-automatic pistol used by law enforcement and civilians.",
+        specs: [
+          "Caliber: 9×19mm",
+          "Range: ~50m",
+          "Fire Mode: Semi-Auto"
+        ],
+        fire: "./sounds/Smith.mp3",
+        reload: "./reload/Smith.mp3"
+      },
     };
 
     let fireAudio = new Audio(); // fire auio
@@ -366,6 +396,7 @@
     // Set up event listeners for each marker
     const krsvMarker = document.getElementById('krsvMarker');
     const ak47Marker = document.getElementById('ak47Marker');
+    const smithMarker = document.getElementById('smithMarker');
 
     const infoButton = document.querySelector(".info-icon");
     const shootButton = document.querySelector(".shoot-icon");
@@ -441,6 +472,17 @@
     });
     
     ak47Marker.addEventListener('markerLost', function() {
+      hideInfoPanel();
+      hideInfo();
+    });
+
+    // Smith and Wesson Marker events
+    smithMarker.addEventListener('markerFound', function() {
+      infoPanel.style.display="block";
+      updateInfoPanel('smithMarker');
+    });
+    
+    smithMarker.addEventListener('markerLost', function() {
       hideInfoPanel();
       hideInfo();
     });
