@@ -316,7 +316,7 @@
       ></a-entity>
     </a-nft>
 
-    <!-- Smith & Wesson Revolver M625: TODO: on model, change marker image -->
+    <!-- Smith & Wesson Revolver M625 -->
     <a-nft
       type="nft"
       id="smithMarker"
@@ -328,8 +328,8 @@
     >
       <a-entity
         gltf-model="./models/Smith/scene.gltf"
-        scale="82 82 82"
-        position="70 0 -150"
+        scale="80 80 80"
+        position="60 0 -150"
         rotation="0 180 0"
       ></a-entity>
     </a-nft>
@@ -344,14 +344,13 @@
 
   <script>
 
-    // Database of gun information
     const gunDatabase = {
       krsvMarker: {
         title: "KRISS Vector",
         description: "A modern submachine gun known for its low recoil and high rate of fire.",
         specs: [
           "Caliber: 9mm",
-          "Range: ~120m",
+          "Range: 120m",
           "Fire Mode: Semi-Auto / Burst"
         ],
         fire: "./sounds/KRSV.mp3",
@@ -363,7 +362,7 @@
         description: "Legendary Soviet assault rifle known for its durability and reliability in harsh conditions.",
         specs: [
           "Caliber: 7.62×39mm",
-          "Range: ~350m",
+          "Range: 350m",
           "Fire Mode: Semi-Auto / Full-Auto"
         ],
         fire: "./sounds/AK47.mp3",
@@ -375,7 +374,7 @@
         description: "Modern semi-automatic pistol used by law enforcement and civilians.",
         specs: [
           "Caliber: 9×19mm",
-          "Range: ~50m",
+          "Range: 50m",
           "Fire Mode: Semi-Auto"
         ],
         fire: "./sounds/Smith.mp3",
