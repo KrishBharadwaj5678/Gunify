@@ -63,10 +63,9 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
       opacity: 0;
-      pointer-events: none; /* makes it non-clickable when hidden */
+      pointer-events: none; 
       transform: translateX(-50%) translateY(20px);
       transition: opacity 0.4s ease, transform 0.4s ease;
-
     }
 
     .info-panel.visible {
@@ -138,12 +137,14 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
       gap: 12px;
+      justify-items: center;  
+      align-items: center;  
     }
 
     /* Each spec card */
     .info-panel .spec {
       background: #2a2a40;
-      padding: 10px 14px;
+      padding: 10px;
       border-radius: 12px;
       font-size: 14px;
       font-weight: 500;
@@ -334,11 +335,29 @@
       ></a-entity>
     </a-nft>
 
+    <!-- Mosin Nagant -->
+    <a-nft
+      type="nft"
+      id="mosinMarker"
+      url="./markers/Mosin/Mosin"
+      smooth="true"
+      smoothCount="10"
+      smoothTolerance=".01"
+      smoothThreshold="5"
+    >
+      <a-entity
+        gltf-model="./models2/Mosin/scene.gltf"
+        scale="170 170 170"
+        position="100 0 -150"
+        rotation="0 -90 0"
+      ></a-entity>
+    </a-nft>
+
     <!-- Lighting -->
     <a-entity light="type: ambient; intensity: 2"></a-entity>
     <a-entity light="type: directional; intensity: 3" position="1 1 1"></a-entity>
 
-    <!-- static camera that moves according to the device movemenents -->
+    <!-- Static camera that moves according to the device movemenents -->
     <a-entity camera></a-entity>
   </a-scene>
 
@@ -368,9 +387,19 @@
         fire: "./sounds/AK47.mp3",
         reload: "./reload/AK47.mp3"
       },
-
       smithMarker: { 
         title: "Smith & Wesson M625",
+        description: "Modern semi-automatic pistol used by law enforcement and civilians.",
+        specs: [
+          "Caliber: 9×19mm",
+          "Range: 50m",
+          "Fire Mode: Semi-Auto"
+        ],
+        fire: "./sounds/Smith.mp3",
+        reload: "./reload/Smith.mp3"
+      },
+      mosinMarker: { 
+        title: "Mosin Nagant",
         description: "Modern semi-automatic pistol used by law enforcement and civilians.",
         specs: [
           "Caliber: 9×19mm",
@@ -396,6 +425,7 @@
     const krsvMarker = document.getElementById('krsvMarker');
     const ak47Marker = document.getElementById('ak47Marker');
     const smithMarker = document.getElementById('smithMarker');
+    const mosinMarker = document.getElementById('mosinMarker');
 
     const infoButton = document.querySelector(".info-icon");
     const shootButton = document.querySelector(".shoot-icon");
@@ -482,6 +512,17 @@
     });
     
     smithMarker.addEventListener('markerLost', function() {
+      hideInfoPanel();
+      hideInfo();
+    });
+
+    // Mossin Nagant Marker events
+    mosinMarker.addEventListener('markerFound', function() {
+      infoPanel.style.display="block";
+      updateInfoPanel('mosinMarker');
+    });
+    
+    mosinMarker.addEventListener('markerLost', function() {
       hideInfoPanel();
       hideInfo();
     });
