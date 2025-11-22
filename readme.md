@@ -44,7 +44,15 @@ cd Gunify
 
 ---
 
-## Contributing 🤝
+## 💡 Usage
+
+1. Download the **trackable images** from the *images* directory in this GitHub repo. 
+2. Load the page in your browser. 
+3. Point your device's camera at the image, and watch the 3D model appear. 
+
+---
+
+## 🤝 Contributing 
 
 Want to contribute? Here's how:
 
