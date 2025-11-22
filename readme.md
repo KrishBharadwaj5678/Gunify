@@ -1,6 +1,6 @@
 # 🔫 **Gunify**
 
-Gunify is a **marker-based WebAR firearm recognition system** that detects gun markers and instantly displays a **3D gun model**, along with key **weapon details** — all directly in your browser.
+Gunify is a **marker-based WebAR** that detects gun markers and instantly displays a **3D gun model**, along with key **weapon details** — all directly in your browser.
 
 ![Gunify](https://github.com/KrishBharadwaj5678/Gunify/raw/main/GunifyDemo.jpg)
 
