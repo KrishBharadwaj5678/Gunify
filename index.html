@@ -219,7 +219,6 @@
       transform: scale(0.95);
     }
 
-    /* Position each button */
     .info-icon { top: 20px; }
     .shoot-icon { top: 100px; }
     .reload-icon { top: 180px; }
@@ -340,7 +339,7 @@
       ></a-entity>
     </a-nft>
 
-    <!-- Mosin Nagant -->
+    <!-- Mosin Nagant -->  <!--Todo: scale, position-->
     <a-nft
       type="nft"
       id="mosinMarker"
@@ -358,7 +357,7 @@
       ></a-entity>
     </a-nft>
 
-    <!-- Uzi -->
+    <!-- Uzi --> <!--Todo: scale, position-->
     <a-nft
       type="nft"
       id="uziMarker"
@@ -371,7 +370,25 @@
       <a-entity
         gltf-model="./models2/Uzi/scene.gltf"
         scale="100 100 100"
-        position="140 20 -150"
+        position="80 40 -150"
+        rotation="0 -90 0"
+      ></a-entity>
+    </a-nft>
+
+    <!-- Sig Sauer -->  <!--Todo: scale, position-->
+    <a-nft                  
+      type="nft"
+      id="sigsauerMarker"
+      url="./markers/SigSauer/SigSauer"
+      smooth="true"
+      smoothCount="10"
+      smoothTolerance=".01"
+      smoothThreshold="5"
+    >
+      <a-entity
+        gltf-model="./models3/SigSauer/scene.gltf"
+        scale="9 9 9"
+        position="180 0 -80"
         rotation="0 -90 0"
       ></a-entity>
     </a-nft>
@@ -429,8 +446,8 @@
           "Range: 500m",
           "Fire Mode: Bolt-Action"
         ],
-        fire: "./sounds/Smith.mp3",
-        reload: "./reload/Smith.mp3"
+        fire: "./sounds/Mosin.mp3",
+        reload: "./reload/Mosin.mp3"
       },
       uziMarker: {  // Todo fire,reload
         title: "Uzi",
@@ -439,6 +456,17 @@
           "Caliber: 9×19mm",
           "Range: 200m",
           "Fire Mode: Full-Auto / Semi-Auto"
+        ],
+        fire: "./sounds/Smith.mp3",
+        reload: "./reload/Smith.mp3"
+      },
+      sigsauerMarker: {  // Todo fire,reload
+        title: "Sig Sauer",
+        description: "A highly reliable pistol, known for its durability. Its smooth trigger pull make it a favorite for civilian shooters.",
+        specs: [
+          "Caliber: 9×19mm",
+          "Range: 50m",
+          "Fire Mode: Semi-Auto"
         ],
         fire: "./sounds/Smith.mp3",
         reload: "./reload/Smith.mp3"
@@ -461,6 +489,7 @@
     const smithMarker = document.getElementById('smithMarker');
     const mosinMarker = document.getElementById('mosinMarker');
     const uziMarker = document.getElementById('uziMarker');
+    const sigsauerMarker = document.getElementById('sigsauerMarker');
 
     const infoButton = document.querySelector(".info-icon");
     const shootButton = document.querySelector(".shoot-icon");
@@ -569,6 +598,17 @@
     });
     
     uziMarker.addEventListener('markerLost', function() {
+      hideInfoPanel();
+      hideInfo();
+    });
+
+    // Sig Sauer Marker events
+    sigsauerMarker.addEventListener('markerFound', function() {
+      infoPanel.style.display="block";
+      updateInfoPanel('sigsauerMarker');
+    });
+    
+    sigsauerMarker.addEventListener('markerLost', function() {
       hideInfoPanel();
       hideInfo();
     });
