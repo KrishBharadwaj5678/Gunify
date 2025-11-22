@@ -1,619 +1,755 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>Gunify</title>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gunify</title>
     <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(to bottom, #1a2a6c, #2c3e50);
-      color: white;
-      min-height: 100vh;
-      overflow: hidden;
-    }
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(to bottom, #1a2a6c, #2c3e50);
+        color: white;
+        min-height: 100vh;
+        overflow: hidden;
+      }
 
-    .arjs-loader {
-      height: 100%;
-      width: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      background-color: rgba(0, 0, 0, 0.8);
-      z-index: 9999;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 5px solid #ffcc00;
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-    
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    
-    /* Info Panel */
-    .info-panel {
-      position: fixed;
-      bottom: 30px;
-      left: 50%;
-      background: #1e1e2f;
-      color: #fff;
-      padding: 25px 30px;
-      border-radius: 18px;
-      font-family: "Poppins", Arial, sans-serif;
-      text-align: left;
-      z-index: 999;
-      max-width: 400px;
-      width: 90%;
-      backdrop-filter: blur(16px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
-      opacity: 0;
-      pointer-events: none; 
-      transform: translateX(-50%) translateY(20px);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
+      /* Custom Spinner */
+      .arjs-loader {
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-    .info-panel.visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateX(-50%) translateY(0);
-    }
+      .spinner {
+        position: relative;
+        width: 120px;
+        height: 90px;
+        margin: 0 auto;
+      }
 
-    /* Header flex layout */
-    .info-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid rgba(255, 204, 0, 0.3);
-      padding-bottom: 6px;
-    }
+      .spinner:before {
+        content: "";
+        position: absolute;
+        bottom: 30px;
+        left: 50px;
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        background: #5468ff;
+        animation: loading-bounce 0.5s ease-in-out infinite alternate;
+      }
 
-    /* Gun title */
-    .info-header h2 {
-      margin: 0;
-      font-size: 22px;
-      font-weight: 700;
-      color: #ffcc00;
-      letter-spacing: 0.5px;
-    }
+      .spinner:after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 7px;
+        width: 45px;
+        border-radius: 4px;
+        box-shadow: 0 5px 0 #f2f2f2, -35px 50px 0 #f2f2f2, -70px 95px 0 #f2f2f2;
+        animation: loading-step 1s ease-in-out infinite;
+      }
 
-    /* Close Button */
-    .close-wrapper {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 34px;
-      height: 34px;
-      border-radius: 30px;
-      background: rgba(255, 255, 255, 0.05);
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
+      @keyframes loading-bounce {
+        0% {
+          transform: scale(1, 0.7);
+        }
 
-    .close-wrapper:hover {
-      background: rgba(255, 255, 255, 0.15);
-      transform: scale(1.1);
-    }
+        40% {
+          transform: scale(0.8, 1.2);
+        }
 
-    /* Close icon */
-    .close-icon {
-      font-size: 18px;
-      color: rgba(255, 255, 255, 0.8);
-      pointer-events: none; 
-    }
+        60% {
+          transform: scale(1, 1);
+        }
 
-    /* Visible animation */
-    .info-panel.visible {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
+        100% {
+          bottom: 140px;
+        }
+      }
 
-    /* Description */
-    .info-panel p {
-      margin: 8px 0;
-      font-size: 15px;
-      line-height: 1.6;
-      color: rgba(255, 255, 255, 0.85);
-    }
+      @keyframes loading-step {
+        0% {
+          box-shadow: 0 10px 0 rgba(0, 0, 0, 0), 0 10px 0 #f2f2f2,
+            -35px 50px 0 #f2f2f2, -70px 90px 0 #f2f2f2;
+        }
 
-    /* Specs container */
-    .info-panel .specs {
-      margin-top: 15px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-      gap: 12px;
-      justify-items: center;  
-      align-items: center;  
-    }
+        100% {
+          box-shadow: 0 10px 0 #f2f2f2, -35px 50px 0 #f2f2f2,
+            -70px 90px 0 #f2f2f2, -70px 90px 0 rgba(0, 0, 0, 0);
+        }
+      }
 
-    /* Each spec card */
-    .info-panel .spec {
-      background: #2a2a40;
-      padding: 10px;
-      border-radius: 12px;
-      font-size: 14px;
-      font-weight: 500;
-      color: #ffcc00;
-      text-align: center;
-      border: 1px solid rgba(255, 204, 0, 0.2);
-      transition: all 0.3s ease;
-    }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
 
-    .info-panel .spec:hover {
-      background: #34344f;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 10px rgba(255, 204, 0, 0.2);
-    }
+      /* Info Panel */
+      .info-panel {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        background: #1e1e2f;
+        color: #fff;
+        padding: 25px 25px;
+        border-radius: 10px;
+        font-family: "Poppins", Arial, sans-serif;
+        text-align: left;
+        z-index: 999;
+        max-width: 400px;
+        width: 90%;
+        backdrop-filter: blur(16px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-50%) translateY(20px);
+        transition: opacity 0.4s ease, transform 0.4s ease;
+        overflow: hidden;
+      }
 
-   .watermark {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      color: white;
-      font-size: 20px;
-      font-weight: 600;
-      text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-      z-index: 10;
-      background: rgba(0, 0, 0, 0.6);
-      padding: 10px 20px;
-      border-radius: 50px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .watermark::before {
-      content: "";
-      width: 12px;
-      height: 12px;
-      background: #E4040E;
-      border-radius: 50%;
-      animation: pulse 1.5s infinite;
-    }
-    
-    @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.4; }
-      100% { opacity: 1; }
-    }
+      /* Info Panel Hover Effect */
+      .info-panel:before {
+        content: "";
+        position: absolute;
+        z-index: -1;
+        top: -16px;
+        right: -16px;
+        background: #232336;
+        height: 32px;
+        width: 32px;
+        border-radius: 32px;
+        transform: scale(1);
+        transform-origin: 50% 50%;
+        transition: transform 0.35s ease-out;
+      }
 
-    /* Common button styles */
-    .icon-btn {
-      position: fixed;
-      right: 20px;
-      background: linear-gradient(135deg, #ffcc00, #ffb300); 
-      color: #1e1e1e;  
-      width: 55px;
-      height: 55px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.25s ease;
-      z-index: 9999;
-    }
+      .go-corner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        width: 2.2em;
+        height: 2.2em;
+        overflow: hidden;
+        top: 0;
+        right: 0;
+        background: #2a2a40;
+        border-radius: 0 4px 0 32px;
+      }
 
-    .icon-btn:hover {
-      box-shadow: 0 8px 20px rgba(255, 204, 0, 0.7);
-      transform: scale(1.1);
-    }
+      .go-close {
+        margin-top: -4px;
+        margin-right: -4px;
+        color: white;
+        font-family: courier, sans;
+      }
 
-    .icon-btn:active {
-      transform: scale(0.95);
-    }
+      .info-panel:hover:before {
+        transform: scale(29);
+      }
 
-    .info-icon { top: 20px; }
-    .shoot-icon { top: 100px; }
-    .reload-icon { top: 180px; }
+      .info-panel .small-desc {
+        transition: all 0.5s ease-out;
+      }
 
-    .fa-info,.fa-gun,.fa-rotate-right{
-      color: white;
-    }
+      .info-panel:hover .card-title {
+        transition: all 0.5s ease-out;
+      }
 
-  </style>
-  <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
-  <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
+      .info-panel.visible {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(-50%) translateY(0);
+      }
 
-<!-- Todo: Button Styling from https://www.hyperui.dev/components/application/button-groups,
-           Adding driver.js https://driverjs.com/docs/installation,
-           Models sound and reload to be added from Mosin,
-           Improve card UI ref - http://uiverse.io/gharsh11032000/selfish-owl-57, https://uiverse.io/Itskrish01/heavy-moth-36, https://uiverse.io/Pradeepsaranbishnoi/loud-turkey-91, https://uiverse.io/00Kubi/ancient-cheetah-57 -->
+      /* Header flex layout */
+      .info-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid rgba(255, 204, 0, 0.3);
+        padding-bottom: 6px;
+      }
 
-<body style="margin : 0px; overflow: hidden;">
+      /* Gun title */
+      .info-header h2 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        color: #ffcc00;
+        letter-spacing: 0.5px;
+      }
 
-  <div class="arjs-loader">
-    <div class="spinner"></div>
-  </div>
-  
-  <div class="watermark">Gunify</div>
+      /* Close Button */
+      .close-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 30px;
+        cursor: pointer;
+      }
 
-  <!-- Info Icon -->
-  <div class="icon-btn info-icon">
-    <i class="fa-solid fa-info"></i>
-  </div>
+      /* Close icon */
+      .close-icon {
+        font-size: 18px;
+        color: rgba(255, 255, 255, 0.8);
+        pointer-events: none;
+      }
 
-  <!-- Shoot Icon -->
-  <div class="icon-btn shoot-icon">
-    <i class="fa-solid fa-gun"></i>
-  </div>
+      /* Visible animation */
+      .info-panel.visible {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
 
-  <!-- Reload Icon -->
-  <div class="icon-btn reload-icon">
-    <i class="fa-solid fa-rotate-right"></i>
-  </div>
-  
-  <!-- Information Panel -->
-  <div class="info-panel" id="infoPanel">
-    <div class="info-header">
-     <h2 id="gunTitle">Gun Title</h2>
-      <div class="close-wrapper">
-        <i class="fa-solid fa-xmark close-icon" id="closeInfo"></i>
+      /* Description */
+      .info-panel p {
+        margin: 8px 0;
+        font-size: 15px;
+        line-height: 1.6;
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      /* Specs container */
+      .info-panel .specs {
+        margin-top: 15px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 12px;
+        justify-items: center;
+        align-items: center;
+      }
+
+      /* Each spec card */
+      .info-panel .spec {
+        background: #2a2a40;
+        padding: 10px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #ffcc00;
+        text-align: center;
+        border: 1px solid rgba(255, 204, 0, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .info-panel .spec:hover {
+        background: #34344f;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 10px rgba(255, 204, 0, 0.2);
+      }
+
+      .watermark {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        color: #ffffff;
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: 0.5px;
+        padding: 10px 18px;
+        border-radius: 40px;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        z-index: 10;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      }
+
+      .watermark::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        background: #ff3b3b;
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(255, 60, 60, 0.7);
+        animation: pulse 1.2s infinite ease-in-out;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.4);
+          opacity: 0.5;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* Common button styles */
+      .icon-btn {
+        position: fixed;
+        right: 20px;
+        background: #fbca1f;
+        color: #1e1e1e;
+        width: 55px;
+        height: 55px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.25s ease;
+        z-index: 9999;
+        outline: 0;
+        border: 0;
+        cursor: pointer;
+        will-change: box-shadow, transform;
+        background: radial-gradient(
+          100% 100% at 100% 0%,
+          #89e5ff 0%,
+          #5468ff 100%
+        );
+        box-shadow: 0px 0.01em 0.01em rgb(45 35 66 / 40%),
+          0px 0.3em 0.7em -0.01em rgb(45 35 66 / 30%),
+          inset 0px -0.01em 0px rgb(58 65 111 / 50%);
+        color: #fff;
+        text-shadow: 0 1px 0 rgb(0 0 0 / 40%);
+        transition: box-shadow 0.15s ease, transform 0.15s ease;
+      }
+
+      .icon-btn:hover {
+        box-shadow: 0px 0.1em 0.2em rgb(45 35 66 / 40%),
+          0px 0.4em 0.7em -0.1em rgb(45 35 66 / 30%),
+          inset 0px -0.1em 0px #3c4fe0;
+        transform: translateY(-0.1em);
+      }
+
+      .icon-btn:active {
+        box-shadow: inset 0px 0.1em 0.6em #3c4fe0;
+        transform: translateY(0em);
+      }
+
+      .info-icon {
+        top: 20px;
+      }
+      .shoot-icon {
+        top: 100px;
+      }
+      .reload-icon {
+        top: 180px;
+      }
+
+      .fa-info,
+      .fa-gun,
+      .fa-rotate-right {
+        color: white;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
+      integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+
+  <body style="margin: 0px; overflow: hidden">
+    <div class="arjs-loader">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="watermark">Gunify</div>
+
+    <!-- Info Icon -->
+    <div class="icon-btn info-icon">
+      <i class="fa-solid fa-info"></i>
+    </div>
+
+    <!-- Shoot Icon -->
+    <div class="icon-btn shoot-icon">
+      <i class="fa-solid fa-gun"></i>
+    </div>
+
+    <!-- Reload Icon -->
+    <div class="icon-btn reload-icon">
+      <i class="fa-solid fa-rotate-right"></i>
+    </div>
+
+    <!-- Information Panel -->
+    <div class="info-panel" id="infoPanel">
+      <div class="info-header">
+        <h2 id="gunTitle">Gun Title</h2>
+      </div>
+      <p id="gunDescription"></p>
+      <div class="specs">
+        <div class="spec" id="spec1"></div>
+        <div class="spec" id="spec2"></div>
+        <div class="spec" id="spec3"></div>
+      </div>
+
+      <!-- Close -->
+      <div class="go-corner">
+        <div class="go-close close-wrapper">
+          <i class="fa-solid fa-xmark close-icon" id="closeInfo"></i>
+        </div>
       </div>
     </div>
-    <p id="gunDescription"></p>
-    <div class="specs">
-      <div class="spec" id="spec1"></div>
-      <div class="spec" id="spec2"></div>
-      <div class="spec" id="spec3"></div>
-    </div>
-  </div>
 
-  <!-- a-frame scene -->
-  <a-scene
-    vr-mode-ui="enabled: false;"
-    renderer="logarithmicDepthBuffer: true;"
-    embedded
-    arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
-  >
-  
-    <!-- KRISS Vector -->
-    <a-nft
-      type="nft"
-      id="krsvMarker"
-      url="./markers/KRSV/KRSV"
-      smooth="true"
-      smoothCount="10"
-      smoothTolerance=".01"
-      smoothThreshold="5"
+    <!-- a-frame scene -->
+    <a-scene
+      vr-mode-ui="enabled: false;"
+      renderer="logarithmicDepthBuffer: true;"
+      embedded
+      arjs="trackingMethod: best; sourceType: webcam;debugUIEnabled: false;"
     >
+      <!-- KRISS Vector -->
+      <a-nft
+        type="nft"
+        id="krsvMarker"
+        url="./markers/KRSV/KRSV"
+        smooth="true"
+        smoothCount="10"
+        smoothTolerance=".01"
+        smoothThreshold="5"
+      >
+        <a-entity
+          gltf-model="./models/KRSV/scene.gltf"
+          scale="90 90 90"
+          position="65 -20 -165"
+          rotation="0 90 0"
+        ></a-entity>
+      </a-nft>
+
+      <!-- AK47 -->
+      <a-nft
+        type="nft"
+        id="ak47Marker"
+        url="./markers/AK47/AK47"
+        smooth="true"
+        smoothCount="10"
+        smoothTolerance=".01"
+        smoothThreshold="5"
+      >
+        <a-entity
+          gltf-model="./models/AK47/scene.gltf"
+          scale="0.7 0.7 0.7"
+          position="75 0 -100"
+          rotation="0 0 0"
+        ></a-entity>
+      </a-nft>
+
+      <!-- Smith & Wesson Revolver M625 -->
+      <a-nft
+        type="nft"
+        id="smithMarker"
+        url="./markers/Smith/Smith"
+        smooth="true"
+        smoothCount="10"
+        smoothTolerance=".01"
+        smoothThreshold="5"
+      >
+        <a-entity
+          gltf-model="./models/Smith/scene.gltf"
+          scale="81 81 81"
+          position="55 0 -150"
+          rotation="0 180 0"
+        ></a-entity>
+      </a-nft>
+
+      <!-- Mosin Nagant  -->
+      <a-nft
+        type="nft"
+        id="mosinMarker"
+        url="./markers/Mosin/Mosin"
+        smooth="true"
+        smoothCount="10"
+        smoothTolerance=".01"
+        smoothThreshold="5"
+      >
+        <a-entity
+          gltf-model="./models2/Mosin/scene.gltf"
+          scale="250 250 280"
+          position="95 0 -90"
+          rotation="0 -90 0"
+        ></a-entity>
+      </a-nft>
+
+      <!-- Uzi -->
+      <a-nft
+        type="nft"
+        id="uziMarker"
+        url="./markers/Uzi/Uzi"
+        smooth="true"
+        smoothCount="10"
+        smoothTolerance=".01"
+        smoothThreshold="5"
+      >
+        <a-entity
+          gltf-model="./models2/Uzi/scene.gltf"
+          scale="80 80 80"
+          position="40 40 -150"
+          rotation="0 -90 0"
+        ></a-entity>
+      </a-nft>
+
+      <!-- Sig Sauer -->
+      <a-nft
+        type="nft"
+        id="sigsauerMarker"
+        url="./markers/SigSauer/SigSauer"
+        smooth="true"
+        smoothCount="10"
+        smoothTolerance=".01"
+        smoothThreshold="5"
+      >
+        <a-entity
+          gltf-model="./models3/SigSauer/scene.gltf"
+          scale="7 7 7"
+          position="65 0 -80"
+          rotation="0 -90 0"
+        ></a-entity>
+      </a-nft>
+
+      <!-- Lighting -->
+      <a-entity light="type: ambient; intensity: 2"></a-entity>
       <a-entity
-        gltf-model="./models/KRSV/scene.gltf"
-        scale="90 90 90"
-        position="65 -20 -165"
-        rotation="0 90 0"
+        light="type: directional; intensity: 3"
+        position="1 1 1"
       ></a-entity>
-    </a-nft>
 
-    <!-- AK47 -->
-    <a-nft
-      type="nft"
-      id="ak47Marker"
-      url="./markers/AK47/AK47"
-      smooth="true"
-      smoothCount="10"
-      smoothTolerance=".01"
-      smoothThreshold="5"
-    >
-      <a-entity
-        gltf-model="./models/AK47/scene.gltf"
-        scale="0.7 0.7 0.7"
-        position="75 0 -100"
-        rotation="0 0 0"
-      ></a-entity>
-    </a-nft>
+      <!-- Static camera that moves according to the device movements -->
+      <a-entity camera></a-entity>
+    </a-scene>
 
-    <!-- Smith & Wesson Revolver M625 -->
-    <a-nft
-      type="nft"
-      id="smithMarker"
-      url="./markers/Smith/Smith"
-      smooth="true"
-      smoothCount="10"
-      smoothTolerance=".01"
-      smoothThreshold="5"
-    >
-      <a-entity
-        gltf-model="./models/Smith/scene.gltf"
-        scale="81 81 81"
-        position="55 0 -150"
-        rotation="0 180 0"
-      ></a-entity>
-    </a-nft>
+    <script>
+      const gunDatabase = {
+        krsvMarker: {
+          title: "KRISS Vector",
+          description:
+            "A modern submachine gun known for its low recoil and high rate of fire.",
+          specs: [
+            "Caliber: 9mm",
+            "Range: 120m",
+            "Fire Mode: Semi-Auto / Burst",
+          ],
+          fire: "./sounds/KRSV.mp3",
+          reload: "./reload/KRSV.mp3",
+        },
 
-    <!-- Mosin Nagant  -->  
-    <a-nft
-      type="nft"
-      id="mosinMarker"
-      url="./markers/Mosin/Mosin"
-      smooth="true"
-      smoothCount="10"
-      smoothTolerance=".01"
-      smoothThreshold="5"
-    >
-      <a-entity
-        gltf-model="./models2/Mosin/scene.gltf"
-        scale="250 250 280" 
-        position="95 0 -90"
-        rotation="0 -90 0"
-      ></a-entity>
-    </a-nft>
+        ak47Marker: {
+          title: "AK-47",
+          description:
+            "Legendary Soviet assault rifle known for its durability and reliability in harsh conditions.",
+          specs: [
+            "Caliber: 7.62×39mm",
+            "Range: 350m",
+            "Fire Mode: Semi-Auto / Full-Auto",
+          ],
+          fire: "./sounds/AK47.mp3",
+          reload: "./reload/AK47.mp3",
+        },
+        smithMarker: {
+          title: "Smith & Wesson M625",
+          description:
+            "Modern semi-automatic pistol used by law enforcement and civilians.",
+          specs: ["Caliber: 9×19mm", "Range: 50m", "Fire Mode: Semi-Auto"],
+          fire: "./sounds/Smith.mp3",
+          reload: "./reload/Smith.mp3",
+        },
+        mosinMarker: {
+          title: "Mosin Nagant",
+          description:
+            "A five-shot military rifle used by the armed forces of the Russian Empire.",
+          specs: [
+            "Caliber: 7.62×54mm",
+            "Range: 500m",
+            "Fire Mode: Bolt-Action",
+          ],
+          fire: "./sounds/Mosin.mp3",
+          reload: "./reload/Mosin.mp3",
+        },
+        uziMarker: {
+          title: "Uzi",
+          description:
+            "A compact Israeli open-bolt submachine gun, widely used by military and security forces worldwide.",
+          specs: [
+            "Caliber: 9×19mm",
+            "Range: 200m",
+            "Fire Mode: Full-Auto / Semi-Auto",
+          ],
+          fire: "./sounds/Uzi.mp3",
+          reload: "./reload/Uzi.mp3",
+        },
+        sigsauerMarker: {
+          title: "Sig Sauer",
+          description:
+            "A highly reliable pistol, known for its durability. Its smooth trigger pull make it a favorite for civilian shooters.",
+          specs: ["Caliber: 9×19mm", "Range: 50m", "Fire Mode: Semi-Auto"],
+          fire: "./sounds/SigSauer.mp3",
+          reload: "./reload/SigSauer.mp3",
+        },
+      };
 
-    <!-- Uzi --> <!-- position - 80, -150  -->
-    <a-nft
-      type="nft"
-      id="uziMarker"
-      url="./markers/Uzi/Uzi"
-      smooth="true"
-      smoothCount="10"
-      smoothTolerance=".01"
-      smoothThreshold="5"
-    >
-      <a-entity
-        gltf-model="./models2/Uzi/scene.gltf"
-        scale="80 80 80"
-        position="40 40 -150"
-        rotation="0 -90 0"
-      ></a-entity>
-    </a-nft>
+      let fireAudio = new Audio(); // fire auio
+      let reloadAudio = new Audio(); // reload audio
 
-    <!-- Sig Sauer -->  <!-- 150 -->
-    <a-nft                  
-      type="nft"
-      id="sigsauerMarker"
-      url="./markers/SigSauer/SigSauer"
-      smooth="true"
-      smoothCount="10"
-      smoothTolerance=".01"
-      smoothThreshold="5"
-    >
-      <a-entity
-        gltf-model="./models3/SigSauer/scene.gltf"
-        scale="7 7 7"
-        position="70 0 -80"
-        rotation="0 -90 0"
-      ></a-entity>
-    </a-nft>
+      const infoPanel = document.getElementById("infoPanel");
+      const gunTitle = document.getElementById("gunTitle");
+      const gunDescription = document.getElementById("gunDescription");
+      const spec1 = document.getElementById("spec1");
+      const spec2 = document.getElementById("spec2");
+      const spec3 = document.getElementById("spec3");
 
-    <!-- Lighting -->
-    <a-entity light="type: ambient; intensity: 2"></a-entity>
-    <a-entity light="type: directional; intensity: 3" position="1 1 1"></a-entity>
+      // Set up event listeners for each marker
+      const krsvMarker = document.getElementById("krsvMarker");
+      const ak47Marker = document.getElementById("ak47Marker");
+      const smithMarker = document.getElementById("smithMarker");
+      const mosinMarker = document.getElementById("mosinMarker");
+      const uziMarker = document.getElementById("uziMarker");
+      const sigsauerMarker = document.getElementById("sigsauerMarker");
 
-    <!-- Static camera that moves according to the device movemenents -->
-    <a-entity camera></a-entity>
-  </a-scene>
+      const infoButton = document.querySelector(".info-icon");
+      const shootButton = document.querySelector(".shoot-icon");
+      const reloadButton = document.querySelector(".reload-icon");
+      const closeButton = document.querySelector(".close-wrapper");
 
-  <script>
+      infoPanel.style.display = "none"; // Hide the info panel initially
 
-    const gunDatabase = {
-      krsvMarker: {
-        title: "KRISS Vector",
-        description: "A modern submachine gun known for its low recoil and high rate of fire.",
-        specs: [
-          "Caliber: 9mm",
-          "Range: 120m",
-          "Fire Mode: Semi-Auto / Burst"
-        ],
-        fire: "./sounds/KRSV.mp3",
-        reload: "./reload/KRSV.mp3"
-      },
+      infoButton.addEventListener("click", () => {
+        infoPanel.classList.add("visible");
+      });
 
-      ak47Marker: {
-        title: "AK-47",
-        description: "Legendary Soviet assault rifle known for its durability and reliability in harsh conditions.",
-        specs: [
-          "Caliber: 7.62×39mm",
-          "Range: 350m",
-          "Fire Mode: Semi-Auto / Full-Auto"
-        ],
-        fire: "./sounds/AK47.mp3",
-        reload: "./reload/AK47.mp3"
-      },
-      smithMarker: { 
-        title: "Smith & Wesson M625",
-        description: "Modern semi-automatic pistol used by law enforcement and civilians.",
-        specs: [
-          "Caliber: 9×19mm",
-          "Range: 50m",
-          "Fire Mode: Semi-Auto"
-        ],
-        fire: "./sounds/Smith.mp3",
-        reload: "./reload/Smith.mp3"
-      },
-      mosinMarker: {  
-        title: "Mosin Nagant",
-        description: "A five-shot military rifle used by the armed forces of the Russian Empire.",
-        specs: [
-          "Caliber: 7.62×54mm",
-          "Range: 500m",
-          "Fire Mode: Bolt-Action"
-        ],
-        fire: "./sounds/Mosin.mp3",
-        reload: "./reload/Mosin.mp3"
-      },
-      uziMarker: {  
-        title: "Uzi",
-        description: "A compact Israeli open-bolt submachine gun, widely used by military and security forces worldwide.",
-        specs: [
-          "Caliber: 9×19mm",
-          "Range: 200m",
-          "Fire Mode: Full-Auto / Semi-Auto"
-        ],
-        fire: "./sounds/Uzi.mp3",
-        reload: "./reload/Uzi.mp3"
-      },
-      sigsauerMarker: {  
-        title: "Sig Sauer",
-        description: "A highly reliable pistol, known for its durability. Its smooth trigger pull make it a favorite for civilian shooters.",
-        specs: [
-          "Caliber: 9×19mm",
-          "Range: 50m",
-          "Fire Mode: Semi-Auto"
-        ],
-        fire: "./sounds/SigSauer.mp3",
-        reload: "./reload/SigSauer.mp3"
-      },
-    };
+      shootButton.addEventListener("click", () => {
+        fireAudio.play();
+      });
 
-    let fireAudio = new Audio(); // fire auio
-    let reloadAudio = new Audio(); // reload audio
+      reloadButton.addEventListener("click", () => {
+        reloadAudio.play();
+      });
 
-    const infoPanel = document.getElementById('infoPanel');
-    const gunTitle = document.getElementById('gunTitle');
-    const gunDescription = document.getElementById('gunDescription');
-    const spec1 = document.getElementById('spec1');
-    const spec2 = document.getElementById('spec2');
-    const spec3 = document.getElementById('spec3');
+      closeButton.addEventListener("click", () => {
+        hideInfoPanel();
+      });
 
-    // Set up event listeners for each marker
-    const krsvMarker = document.getElementById('krsvMarker');
-    const ak47Marker = document.getElementById('ak47Marker');
-    const smithMarker = document.getElementById('smithMarker');
-    const mosinMarker = document.getElementById('mosinMarker');
-    const uziMarker = document.getElementById('uziMarker');
-    const sigsauerMarker = document.getElementById('sigsauerMarker');
+      // Function to update the info panel
+      function updateInfoPanel(gunId) {
+        const gunData = gunDatabase[gunId];
 
-    const infoButton = document.querySelector(".info-icon");
-    const shootButton = document.querySelector(".shoot-icon");
-    const reloadButton = document.querySelector(".reload-icon");
-    const closeButton = document.querySelector(".close-wrapper");
-
-    infoPanel.style.display="none"; // Hide the info panel initially
-
-    infoButton.addEventListener("click",()=>{
-      infoPanel.classList.add('visible');
-    })
-
-    shootButton.addEventListener("click",()=>{
-      fireAudio.play();
-    })
-
-    reloadButton.addEventListener("click",()=>{
-      reloadAudio.play();
-    })  
-
-    closeButton.addEventListener("click",()=>{
-      hideInfoPanel();
-    })  
-
-    // Function to update the info panel
-    function updateInfoPanel(gunId) {
-      const gunData = gunDatabase[gunId];
-
-      if (gunData) {
-        gunTitle.textContent = gunData.title;
-        gunDescription.textContent = gunData.description;
-        spec1.textContent = gunData.specs[0];
-        spec2.textContent = gunData.specs[1];
-        spec3.textContent = gunData.specs[2];
-        fireAudio.src = gunData.fire;
-        reloadAudio.src = gunData.reload;
-        infoPanel.classList.add("visible"); 
+        if (gunData) {
+          gunTitle.textContent = gunData.title;
+          gunDescription.textContent = gunData.description;
+          spec1.textContent = gunData.specs[0];
+          spec2.textContent = gunData.specs[1];
+          spec3.textContent = gunData.specs[2];
+          fireAudio.src = gunData.fire;
+          reloadAudio.src = gunData.reload;
+          infoPanel.classList.add("visible");
+        }
       }
-    }
 
-    // Function to hide the info panel
-    function hideInfoPanel() {
-      infoPanel.classList.remove('visible');
-    }
+      // Function to hide the info panel
+      function hideInfoPanel() {
+        infoPanel.classList.remove("visible");
+      }
 
-    // Function to remove the info
-    function hideInfo(){
-      gunTitle.textContent = null;
-      gunDescription.textContent = null;
-      spec1.textContent = null;
-      spec2.textContent = null;
-      spec3.textContent = null;
-      fireAudio.src = '';
-      reloadAudio.src = '';
-      infoPanel.style.display="none";
-    }
+      // Function to remove the info
+      function hideInfo() {
+        gunTitle.textContent = null;
+        gunDescription.textContent = null;
+        spec1.textContent = null;
+        spec2.textContent = null;
+        spec3.textContent = null;
+        fireAudio.src = "";
+        reloadAudio.src = "";
+        infoPanel.style.display = "none";
+      }
 
-     // KRSV Marker events
-    krsvMarker.addEventListener('markerFound', function() {
-      infoPanel.style.display="block";
-      updateInfoPanel('krsvMarker');
-    });
-    
-    krsvMarker.addEventListener('markerLost', function() {
-      hideInfoPanel();
-      hideInfo();
-    });
-    
-    // AK47 Marker events
-    ak47Marker.addEventListener('markerFound', function() {
-      infoPanel.style.display="block";
-      updateInfoPanel('ak47Marker');
-    });
-    
-    ak47Marker.addEventListener('markerLost', function() {
-      hideInfoPanel();
-      hideInfo();
-    });
+      // KRSV Marker events
+      krsvMarker.addEventListener("markerFound", function () {
+        infoPanel.style.display = "block";
+        updateInfoPanel("krsvMarker");
+      });
 
-    // Smith and Wesson Marker events
-    smithMarker.addEventListener('markerFound', function() {
-      infoPanel.style.display="block";
-      updateInfoPanel('smithMarker');
-    });
-    
-    smithMarker.addEventListener('markerLost', function() {
-      hideInfoPanel();
-      hideInfo();
-    });
+      krsvMarker.addEventListener("markerLost", function () {
+        hideInfoPanel();
+        hideInfo();
+      });
 
-    // Mossin Nagant Marker events
-    mosinMarker.addEventListener('markerFound', function() {
-      infoPanel.style.display="block";
-      updateInfoPanel('mosinMarker');
-    });
-    
-    mosinMarker.addEventListener('markerLost', function() {
-      hideInfoPanel();
-      hideInfo();
-    });
+      // AK47 Marker events
+      ak47Marker.addEventListener("markerFound", function () {
+        infoPanel.style.display = "block";
+        updateInfoPanel("ak47Marker");
+      });
 
-    // Uzi Marker events
-    uziMarker.addEventListener('markerFound', function() {
-      infoPanel.style.display="block";
-      updateInfoPanel('uziMarker');
-    });
-    
-    uziMarker.addEventListener('markerLost', function() {
-      hideInfoPanel();
-      hideInfo();
-    });
+      ak47Marker.addEventListener("markerLost", function () {
+        hideInfoPanel();
+        hideInfo();
+      });
 
-    // Sig Sauer Marker events
-    sigsauerMarker.addEventListener('markerFound', function() {
-      infoPanel.style.display="block";
-      updateInfoPanel('sigsauerMarker');
-    });
-    
-    sigsauerMarker.addEventListener('markerLost', function() {
-      hideInfoPanel();
-      hideInfo();
-    });
+      // Smith and Wesson Marker events
+      smithMarker.addEventListener("markerFound", function () {
+        infoPanel.style.display = "block";
+        updateInfoPanel("smithMarker");
+      });
 
-  </script>
+      smithMarker.addEventListener("markerLost", function () {
+        hideInfoPanel();
+        hideInfo();
+      });
 
-</body>
+      // Mossin Nagant Marker events
+      mosinMarker.addEventListener("markerFound", function () {
+        infoPanel.style.display = "block";
+        updateInfoPanel("mosinMarker");
+      });
+
+      mosinMarker.addEventListener("markerLost", function () {
+        hideInfoPanel();
+        hideInfo();
+      });
+
+      // Uzi Marker events
+      uziMarker.addEventListener("markerFound", function () {
+        infoPanel.style.display = "block";
+        updateInfoPanel("uziMarker");
+      });
+
+      uziMarker.addEventListener("markerLost", function () {
+        hideInfoPanel();
+        hideInfo();
+      });
+
+      // Sig Sauer Marker events
+      sigsauerMarker.addEventListener("markerFound", function () {
+        infoPanel.style.display = "block";
+        updateInfoPanel("sigsauerMarker");
+      });
+
+      sigsauerMarker.addEventListener("markerLost", function () {
+        hideInfoPanel();
+        hideInfo();
+      });
+    </script>
+  </body>
 </html>
